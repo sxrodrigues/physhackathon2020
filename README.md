@@ -1,1 +1,1 @@
-# physhackathon2020
+# Schrodinger's Hack 2020
