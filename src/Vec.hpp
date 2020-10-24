@@ -1,3 +1,6 @@
+#ifndef __VEC_HPP__
+#define __VEC_HPP__
+
 #include <array>
 #include <cstddef>
 #include <type_traits>
@@ -8,6 +11,11 @@ class Vec {
         // 0-initialized constructor
         Vec() {
             m_data = {};
+        }
+
+        // Initialize from an array
+        Vec(const std::array<T, N>&& data) {
+            m_data = data;
         }
 
         // FIXME: We are assuming N >= 1
@@ -28,26 +36,48 @@ class Vec {
 
         // Return the x component if N >= 1
         template <size_t n = N>
-        typename std::enable_if<n >= 1 && n == N, T>::type get_x() {
+        typename std::enable_if<n >= 1 && n == N, T>::type get_x() const {
             return m_data[0];
         }
 
         // Return the y component if N >= 2
         template <size_t n = N>
-        typename std::enable_if<n >= 2 && n == N, T>::type get_y() {
+        typename std::enable_if<n >= 2 && n == N, T>::type get_y() const {
             return m_data[1];
         }
 
         // Return the z component if N >= 3
         template <size_t n = N>
-        typename std::enable_if<n >= 3 && n == N, T>::type get_z() {
+        typename std::enable_if<n >= 3 && n == N, T>::type get_z() const {
             return m_data[2];
         }
 
         // Return the w component if N >= 4
         template <size_t n = N>
-        typename std::enable_if<n >= 4 && n == N, T>::type get_w() {
+        typename std::enable_if<n >= 4 && n == N, T>::type get_w() const {
             return m_data[3];
+        }
+
+        Vec<T, N>& operator+=(const Vec<T, N>& rhs) {
+            for (size_t i = 0; i < N; ++i) {
+                m_data[i] += rhs.m_data[i];
+            }
+            return *this;
+        }
+
+        Vec<T, N> operator*(const T rhs) {
+            std::array<T, N> new_data = m_data;
+            for (auto&& elem : new_data) {
+                new_data *= rhs;
+            }
+            return Vec<T, N>(new_data);
+        }
+
+        Vec<T, N>& operator*=(const T rhs) {
+            for (auto&& elem : m_data) {
+                elem *= rhs;
+            }
+            return *this;
         }
 
     private:
@@ -64,6 +94,17 @@ class Vec {
         std::array<T, N> m_data;
 };
 
+template<typename T, size_t N>
+Vec<T, N> operator*(const T lhs, const Vec<T, N>& rhs) {
+    std::array<T, N> new_data = rhs.m_data;
+    for (auto&& elem : new_data) {
+        new_data *= lhs;
+    }
+    return Vec<T, N>(new_data);
+}
+
 typedef Vec<float, 2> Vec2f;
 typedef Vec<float, 3> Vec3f;
+
+#endif /* __VEC_HPP__ */
 
