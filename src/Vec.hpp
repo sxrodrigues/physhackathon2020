@@ -5,6 +5,11 @@
 #include <cstddef>
 #include <type_traits>
 
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+
+namespace py = pybind11;
+
 template <typename T, size_t N>
 class Vec {
     public:
@@ -14,7 +19,7 @@ class Vec {
         }
 
         // Initialize from an array
-        Vec(const std::array<T, N>&& data) {
+        Vec(const std::array<T, N>& data) {
             m_data = data;
         }
 
@@ -68,7 +73,7 @@ class Vec {
         Vec<T, N> operator*(const T rhs) {
             std::array<T, N> new_data = m_data;
             for (auto&& elem : new_data) {
-                new_data *= rhs;
+                elem *= rhs;
             }
             return Vec<T, N>(new_data);
         }
@@ -94,17 +99,18 @@ class Vec {
         std::array<T, N> m_data;
 };
 
-template<typename T, size_t N>
-Vec<T, N> operator*(const T lhs, const Vec<T, N>& rhs) {
-    std::array<T, N> new_data = rhs.m_data;
-    for (auto&& elem : new_data) {
-        new_data *= lhs;
-    }
-    return Vec<T, N>(new_data);
-}
-
 typedef Vec<float, 2> Vec2f;
 typedef Vec<float, 3> Vec3f;
+
+void py_init_vec(py::module& m) {
+    py::class_<Vec2f>(m, "Vec2f")
+        .def(py::init<>())
+        .def(py::init<const std::array<float, 2>&&>());
+
+    py::class_<Vec3f>(m, "Vec3f")
+        .def(py::init<>())
+        .def(py::init<const std::array<float, 3>&&>());
+}
 
 #endif /* __VEC_HPP__ */
 

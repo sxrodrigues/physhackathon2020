@@ -3,6 +3,9 @@
 
 #include "Vec.hpp"
 
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+
 template<typename T, size_t N>
 class Particle {
     public:
@@ -28,7 +31,7 @@ class Particle {
 
             // Simple Euler integration
             m_velo += m_accel * dt;
-            m_pos += 0.5 * m_velo * dt;
+            m_pos += m_velo * 0.5f * dt;
 
             // Reset the acceleration to 0
             m_accel = Vec<T, N>();
@@ -44,6 +47,18 @@ class Particle {
 
 typedef Particle<float, 2> Particle2f;
 typedef Particle<float, 3> Particle3f;
+
+void py_init_particle(py::module& m) {
+    py::class_<Particle2f>(m, "Particle2f")
+        .def(py::init<>())
+        .def(py::init<const Vec2f&>())
+        .def("step", &Particle2f::step);
+
+    py::class_<Particle3f>(m, "Particle3f")
+        .def(py::init<>())
+        .def(py::init<const Vec3f&>())
+        .def("step", &Particle3f::step);
+}
 
 #endif /* __PARTICLE_HP__ */
 
