@@ -10,7 +10,7 @@ def start(request):
 
 def sim(request):
 
-    sc = px.scatter(x=[0, 1, 2, 3, 4], y=[0, 1, 4, 9, 16], title="Hi, Im an example plot!")
+    sc = px.scatter(x=[0, 1, 2, 3, 4], y=[0, 1, 4, 9, 16], title="Hey, Im an example plot!")
 
     plot = off.plot(sc,output_type='div', include_plotlyjs=True)
 
