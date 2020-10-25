@@ -17,3 +17,18 @@ python3 src/main.py
 ```
 This should print the value 3 to the console.
 
+
+## Running the WebApp
+
+First to install Django run:
+```sh
+pip3 install Django
+```
+
+Then enter the "web_app" directory and run:
+```sh
+python3 manage.py runserver
+```
+
+That should run the web application in your browser as a local host.
+
