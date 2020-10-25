@@ -1,0 +1,33 @@
+<ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" style="background-color: #fab115; position:absolute;
+width: 200px;
+height: 900px;">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'start' %}">
+      <div class = "logo-image">
+        {% load static %}
+        <img src="{% static 'simapp/logo.jpg' %}" class = 'img-responsive' style = 'width: 180px; height: 80px; margin-top: 20px;'/>
+      </div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0" style = 'position:relative; top:25px; padding-bottom: 15px;'>
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active">
+      <a class="nav-link" href="{% url 'start' %}">
+        <i class="fas fa-fw fa-home"></i>
+        <span>Home</span></a>
+    </li>
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active">
+      <a class="nav-link" href="{% url 'sim' %}">
+        <i class="fas fa-fw fa-chart-area"></i>
+        <span>Simulation</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+  </ul>
