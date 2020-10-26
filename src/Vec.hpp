@@ -63,6 +63,21 @@ class Vec {
             return m_data[3];
         }
 
+        Vec<T, N> operator-(const Vec<T, N>&rhs) const {
+            std::array<T, N> new_data = m_data;
+            for (size_t i = 0; i < N; ++i) {
+                new_data[i] -= rhs.m_data[i];
+            }
+            return Vec<T, N>(new_data);
+        }
+
+        Vec<T, N>& operator-=(const Vec<T, N>& rhs) {
+            for (size_t i = 0; i < N; ++i) {
+                m_data[i] -= rhs.m_data[i];
+            }
+            return *this;
+        }
+
         Vec<T, N>& operator+=(const Vec<T, N>& rhs) {
             for (size_t i = 0; i < N; ++i) {
                 m_data[i] += rhs.m_data[i];
@@ -70,7 +85,7 @@ class Vec {
             return *this;
         }
 
-        Vec<T, N> operator*(const T rhs) {
+        Vec<T, N> operator*(const T rhs) const {
             std::array<T, N> new_data = m_data;
             for (auto&& elem : new_data) {
                 elem *= rhs;
@@ -83,6 +98,22 @@ class Vec {
                 elem *= rhs;
             }
             return *this;
+        }
+
+        T norm_sqr() const {
+            T total = 0.f;
+            for (auto elem : m_data) {
+                total += elem*elem;
+            }
+            return total;
+        }
+
+        T dot(const Vec<T, N>& rhs) {
+            T total = 0.f;
+            for (size_t i = 0; i < N; ++i) {
+                total += m_data[i] + rhs.m_data[i];
+            }
+            return total;
         }
 
     private:

@@ -13,6 +13,7 @@ class Particle {
             m_pos = Vec<T, N>();
             m_velo = Vec<T, N>();
             m_accel = Vec<T, N>();
+            m_radius = 0.05f;
             m_mass = 1.f;
             m_restitution = 1.f;
         }
@@ -20,12 +21,13 @@ class Particle {
         Particle(const Vec<T, N>& pos) : m_pos(pos) {
             m_velo = Vec<T, N>();
             m_accel = Vec<T, N>();
+            m_radius = 0.05f;
             m_mass = 1.f;
             m_restitution = 1.f;
         }
 
         // Step forward in time
-        void step(float dt) {
+        void step(const float dt) {
             // TODO: We need to use something better than the Euler method in
             // the future. Perhaps Verlet?
 
@@ -37,10 +39,31 @@ class Particle {
             m_accel = Vec<T, N>();
         }
 
+        Vec<T, N> get_pos() const {
+            return m_pos;
+        }
+
+        Vec<T, N> get_velo() const {
+            return m_velo;
+        }
+
+        void set_velo(const Vec<T, N>& velo) {
+            m_velo = velo;
+        }
+
+        T get_radius() const {
+            return m_radius;
+        }
+
+        T get_mass() const {
+            return m_mass;
+        }
+
     private:
         Vec<T, N> m_pos;
         Vec<T, N> m_velo;
         Vec<T, N> m_accel;
+        T m_radius;
         T m_mass;
         T m_restitution;
 };
