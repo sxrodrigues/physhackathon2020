@@ -13,24 +13,28 @@ namespace py = pybind11;
 class Wall {
     public:
         Wall() {
-            m_vertices = std::vector<Vec2f>();
+            m_vertices = std::vector<Vec>();
         }
-        Wall(const std::vector<Vec2f>& vertices) {
+        Wall(const std::vector<Vec>& vertices) {
             m_vertices = vertices;
         }
 
-        void add_vertex(const Vec2f& vertex) {
+        void add_vertex(const Vec& vertex) {
             m_vertices.push_back(vertex);
         }
 
+        std::vector<Vec>& get_vertices() {
+            return m_vertices;
+        }
+
     private:
-        std::vector<Vec2f> m_vertices;
+        std::vector<Vec> m_vertices;
 };
 
 void py_init_wall(py::module& m) {
     py::class_<Wall>(m, "Wall")
         .def(py::init<>())
-        .def(py::init<std::vector<Vec2f>&>())
+        .def(py::init<std::vector<Vec>&>())
         .def("add_vertex", &Wall::add_vertex);
 }
 
