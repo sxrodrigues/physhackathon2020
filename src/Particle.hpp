@@ -1,86 +1,81 @@
 #ifndef __PARTICLE_HPP__
 #define __PARTICLE_HPP__
 
+#include <cmath>
+
 #include "Vec.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-template<typename T, size_t N>
 class Particle {
     public:
         Particle() {
-            m_pos = Vec<T, N>();
-            m_velo = Vec<T, N>();
-            m_accel = Vec<T, N>();
+            m_pos = Vec(0.f, 0.f);
+            m_prev_accel = Vec(0.f, 0.f);
+            m_accel = Vec(0.f, 0.f);
             m_radius = 0.05f;
             m_mass = 1.f;
-            m_restitution = 1.f;
         }
 
-        Particle(const Vec<T, N>& pos) : m_pos(pos) {
-            m_velo = Vec<T, N>();
-            m_accel = Vec<T, N>();
+        Particle(const Vec& pos, const Vec& velo) : 
+            m_pos(pos)
+        {
+            m_velo = velo;
+            m_prev_accel = Vec(0.f, 0.f);
+            m_accel = Vec(0.f, 0.f);
             m_radius = 0.05f;
             m_mass = 1.f;
-            m_restitution = 1.f;
         }
 
-        // Step forward in time
+        // Step forward in time (velocity Verlet)
         void step(const float dt) {
-            // TODO: We need to use something better than the Euler method in
-            // the future. Perhaps Verlet?
+            m_pos += m_velo * dt + m_prev_accel * (0.5 * dt * dt);
+            m_velo += (m_prev_accel + m_accel) * (0.5 * dt);
 
-            // Simple Euler integration
-            m_velo += m_accel * dt;
-            m_pos += m_velo * 0.5f * dt;
-
-            // Reset the acceleration to 0
-            m_accel = Vec<T, N>();
+            m_accel = Vec(0.f, 0.f);
         }
 
-        Vec<T, N> get_pos() const {
+        // Apply a force
+        void impulse(const Vec& force) {
+            m_prev_accel = m_accel;
+            m_accel += force * (1.f / m_mass);
+        }
+
+        Vec get_pos() const {
             return m_pos;
         }
 
-        Vec<T, N> get_velo() const {
+        Vec get_velo() const {
             return m_velo;
         }
 
-        void set_velo(const Vec<T, N>& velo) {
+        Vec set_velo(const Vec& velo) {
             m_velo = velo;
         }
 
-        T get_radius() const {
+        float get_radius() const {
             return m_radius;
         }
 
-        T get_mass() const {
+        float get_mass() const {
             return m_mass;
         }
 
     private:
-        Vec<T, N> m_pos;
-        Vec<T, N> m_velo;
-        Vec<T, N> m_accel;
-        T m_radius;
-        T m_mass;
-        T m_restitution;
+        Vec m_pos;
+        Vec m_velo;
+        Vec m_accel;
+        Vec m_prev_accel;
+        float m_radius;
+        float m_mass;
 };
 
-typedef Particle<float, 2> Particle2f;
-typedef Particle<float, 3> Particle3f;
-
 void py_init_particle(py::module& m) {
-    py::class_<Particle2f>(m, "Particle2f")
+    py::class_<Particle>(m, "Particle")
         .def(py::init<>())
-        .def(py::init<const Vec2f&>())
-        .def("step", &Particle2f::step);
-
-    py::class_<Particle3f>(m, "Particle3f")
-        .def(py::init<>())
-        .def(py::init<const Vec3f&>())
-        .def("step", &Particle3f::step);
+        .def(py::init<const Vec&, const Vec&>())
+        .def("step", &Particle::step);
 }
 
 #endif /* __PARTICLE_HP__ */
