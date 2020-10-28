@@ -20,4 +20,6 @@ def sim(request):
 
 def about(request):
 
+    
+
     return render(request, 'simapp/about.html')
