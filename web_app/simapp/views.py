@@ -18,3 +18,8 @@ def sim(request):
 
     return render(request, 'simapp/sim.html', context)
 
+def about(request):
+
+    
+
+    return render(request, 'simapp/about.html')
