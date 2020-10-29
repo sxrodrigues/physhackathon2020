@@ -1,23 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>test</title>
-</head>
-<div class="container">
+<img id="thruster-img" alt="Loading"/>
+<script>
+    // Every ~ 10000 ms, make a get request to 'sim/get_thruster' and update #thruster-img
+    function update_img() {
+        $.get("get_thruster", (data, _ ) => {
+            const str = "data:image/png;base64, " + data.slice(2, -2);
+            document.getElementById("thruster-img").src=str;
+        });
+    }
+    setInterval(update_img, 500);
+</script>
 
-    <h2 class = "text-secondary" style="display:inline; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
-        Example Plot </h2>
-
-    <div style="width: 1100px; padding-left: 100px; margin-top: 20px;">
-        {% autoescape off %}
-        {{ plot }}
-        {% endautoescape %}</div>
-    
-    <div class="w3-panel w3-padding-64">⠀⠀⠀⠀⠀⠀⠀⠀</div>
- </div>
-
-    {% endblock content %}
-
+{% endblock content %}
