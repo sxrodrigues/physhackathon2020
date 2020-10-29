@@ -75,7 +75,9 @@ struct Vec {
 void py_init_vec(py::module& m) {
     py::class_<Vec>(m, "Vec")
         .def(py::init<>())
-        .def(py::init<const float, const float>());
+        .def(py::init<const float, const float>())
+        .def_readwrite("x", &Vec::x)
+        .def_readwrite("y", &Vec::y);
 }
 
 #endif /* __VEC_HPP__ */
