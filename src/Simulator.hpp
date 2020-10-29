@@ -57,6 +57,9 @@ static Vec lennard_jones(const Vec A, const Vec B) {
     return Vec(0.f, 0.f);
 }
 
+// static const constexpr size_t num_particles = 100;
+#define NUM_PARTICLES 1000
+
 class Simulator {
     public:
         Simulator() {
@@ -64,12 +67,16 @@ class Simulator {
             m_walls = std::vector<Wall>();
         }
 
-        Simulator(const size_t num_particles, std::vector<Wall>& walls) {
+        Simulator(std::vector<Wall>& walls) {
             std::default_random_engine generator; // TODO: Seed the generator perhaps?
-            std::uniform_real_distribution<float> distribution(-1.f, 1.f);
+            std::normal_distribution<float> pos_dist(0.f, 0.1f);
+            std::uniform_real_distribution<float> x_velo_dist(-45.f, 45.f);
+            std::uniform_real_distribution<float> y_velo_dist(0.f, 15.f);
 
-            for (size_t i = 0; i < num_particles; ++i) {
-                Particle p(Vec(distribution(generator), distribution(generator)), Vec(distribution(generator), distribution(generator)) * 15.f);
+            for (size_t i = 0; i < NUM_PARTICLES; ++i) {
+                const Vec pos = Vec(pos_dist(generator), pos_dist(generator));
+                const Vec velo = Vec(x_velo_dist(generator), y_velo_dist(generator));
+                Particle p(pos, velo);
                 m_particles.push_back(p);
             }
             m_walls = walls;
@@ -80,7 +87,7 @@ class Simulator {
                 const Particle p1 = m_particles[i];
 
                 // Particles bounce off walls
-                for (auto wall : m_walls) {
+                for (auto&& wall : m_walls) {
                     std::vector<Vec> verts = wall.get_vertices();
                     for (size_t j = 0; j < verts.size() - 1; ++j) {
                         Vec vert1 = verts[j];
@@ -88,6 +95,10 @@ class Simulator {
 
                         if (circle_line_intersection(p1.get_radius(), p1.get_pos(), vert1, vert2)) {
                             Vec velo = p1.get_velo();
+    
+                            // F = dp / dt
+                            wall.force += velo * (p1.get_mass() * 1.f/dt);
+
                             Vec normal = Vec(-(vert2 - vert1).y, (vert2-vert1).x).normalized();
                             velo -= normal * 2.f * velo.dot(normal);
                             m_particles[i].set_velo(velo);
@@ -116,6 +127,16 @@ class Simulator {
             }
         }
 
+        void many_step(const size_t num_steps, float dt) {
+            for (size_t i = 0; i < num_steps; ++i) {
+                step(dt);
+            }
+        }
+
+        std::vector<Wall> get_walls() {
+            return m_walls;
+        }
+
         py::memoryview get_particle_positions() {
             float* positions = new float[m_particles.size() * 2];
             for (size_t i = 0; i < m_particles.size(); ++i) {
@@ -125,7 +146,7 @@ class Simulator {
             m_allocations.push_back(positions);
             return py::memoryview::from_buffer(
                     positions,
-                    {30, 2}, // rows, cols TODO: replace 30 with m_particles.size()
+                    {NUM_PARTICLES, 2}, // rows, cols TODO: replace NUM_PARTICLES with m_particles.size()
                     {2 * sizeof(float), sizeof(float)});
         }
 
@@ -134,6 +155,12 @@ class Simulator {
 
             delete[] m_allocations[0];
             m_allocations.erase(m_allocations.begin(), m_allocations.begin() + 1);
+        }
+
+        ~Simulator() {
+            for (auto alloc : m_allocations) {
+                delete[] alloc;
+            }
         }
 
     private:
@@ -145,10 +172,12 @@ class Simulator {
 void py_init_simulator(py::module& m) {
     py::class_<Simulator>(m, "Simulator")
         .def(py::init<>())
-        .def(py::init<const size_t, std::vector<Wall>&>())
+        .def(py::init<std::vector<Wall>&>())
         .def("step", &Simulator::step)
+        .def("many_step", &Simulator::many_step)
         .def("get_particle_positions", &Simulator::get_particle_positions)
-        .def("free_allocation", &Simulator::free_allocation);
+        .def("free_allocation", &Simulator::free_allocation)
+        .def("get_walls", &Simulator::get_walls);
 }
 
 #endif /*__SIMULATOR_HPP__ */
