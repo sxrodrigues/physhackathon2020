@@ -1,7 +1,4 @@
 from django.shortcuts import render
-import plotly.express as px
-import plotly.graph_objects as go
-import plotly.offline as off
 
 from .ga import get_image
 
