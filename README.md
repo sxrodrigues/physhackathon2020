@@ -1,6 +1,6 @@
 # Schrodinger's Hack 2020
 
-![Thruster example](thruster.gif)
+![Thruster example](https://github.com/sxrodrigues/physhackathon2020/blob/main/truster.gif)
 
 ## Dependencies
 Before you can do anything, you need to install the dependencies of this project.
