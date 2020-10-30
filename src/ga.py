@@ -129,6 +129,7 @@ def anim_init():
 
 def anim_update(_frame):
     wall, fitness = ga.epoch()
+    const_wall_plots = [ax.plot([], [], '-k')[0] for _ in range(len(ga.const_walls))]
 
     print(f'{fitness:e}')
 
@@ -142,5 +143,5 @@ def anim_update(_frame):
 
 anim = FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=100)
 plt.show()
-#  anim = FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=200, frames=300)
-#  anim.save('/Users/pvirally/Desktop/gif.gif', writer='imagemagick', fps=15)
+#  anim = FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=200, frames=100)
+#  anim.save('/Users/pvirally/Desktop/ga.gif', writer='imagemagick', fps=2)

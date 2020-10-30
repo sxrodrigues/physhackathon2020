@@ -62,4 +62,4 @@ cd web_app
 python3 manage.py runserver
 ```
 
-You should now be able to naviaget to [http://localhost:8000/](http://localhost:8000/) to see the server running.
+You should now be able to navigate to [http://127.0.0.1:8000/](http://127.0.0.1:8000/) to see the server running.
