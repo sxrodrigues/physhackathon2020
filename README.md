@@ -1,5 +1,7 @@
 # Schrodinger's Hack 2020
 
+![Thruster example](thruster.gif)
+
 ## Dependencies
 Before you can do anything, you need to install the dependencies of this project.
 ```sh
