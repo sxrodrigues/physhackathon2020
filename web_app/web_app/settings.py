@@ -26,7 +26,7 @@ SECRET_KEY = '3v^c*-$ji0mjhzbbv)(hi^_+hcfc8)f+fylnv)z#8jgi81dq^k'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['genzthrusters.pythonanywhere.com']
 
 
 # Application definition
