@@ -50,7 +50,7 @@ class Particle {
             return m_velo;
         }
 
-        Vec set_velo(const Vec& velo) {
+        void set_velo(const Vec& velo) {
             m_velo = velo;
         }
 

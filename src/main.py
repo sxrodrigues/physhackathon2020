@@ -2,9 +2,9 @@ from simulator import Vec, Particle, Wall, Simulator
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-#  wall_vertices = [[(-2.0, -2.0), (2.0, -2.0), (2.0, 2.0), (-2.0, 2.0), (-2.0, -2.0)],
-                 #  [(1.0, 1.8), (1.8, 0.0), (1.0, -1.8)]]
-wall_vertices = [[(1.0, 1.8), (1.8, 0.0), (1.0, -1.8)]]
+wall_vertices = [[(-2.0, -2.0), (2.0, -2.0), (2.0, 2.0), (-2.0, 2.0), (-2.0, -2.0)],
+                 [(1.0, 1.8), (1.8, 0.0), (1.0, -1.8)]]
+#  wall_vertices = [[(1.0, 1.8), (1.8, 0.0), (1.0, -1.8)]]
 #  wall_vertices = []
 
 walls = [Wall([Vec(v[0], v[1]) for v in w]) for w in wall_vertices]
@@ -27,7 +27,8 @@ def anim_update(_frame):
         ys = [v[1] for v in w]
         plot.set_data(xs, ys)
 
-    sim.many_step(10000, 0.001)
+    #  sim.many_step(10000, 0.001)
+    sim.step(0.001)
     print(f"{sim.get_walls()[0].force.x}, {sim.get_walls()[0].force.y}")
 
     # positions is a list like so: [[x0, y0], [x1, y1], ...]
@@ -42,7 +43,7 @@ def anim_update(_frame):
     scatter.set_data(xs, ys)
     return [scatter, *wall_plots]
 
-#  anim = FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=1000)
-#  plt.show()
-anim = FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=10, frames=400)
-anim.save('/Users/pvirally/Desktop/gif.gif', writer='imagemagick', fps=60)
+anim = FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=10)
+plt.show()
+#  anim = FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=10, frames=400)
+#  anim.save('/Users/pvirally/Desktop/gif.gif', writer='imagemagick', fps=60)
