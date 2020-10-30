@@ -31,7 +31,7 @@ class Wall {
         void mutate(double max_dist) {
             std::default_random_engine generator(m_vertices[0].x);
             std::uniform_real_distribution<float> dist(-max_dist, max_dist);
-            for (size_t i = 0; i < m_vertices.size(); ++i) {
+            for (size_t i = 1; i < m_vertices.size(); ++i) {
                 m_vertices[i].x += dist(generator);
                 m_vertices[i].y += dist(generator);
             }

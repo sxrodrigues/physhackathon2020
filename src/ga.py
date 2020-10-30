@@ -27,13 +27,15 @@ class GA:
         throat = 0.3
         self.n_partilces = 10000
         self.dt = 0.001
+        starting_angle = math.pi/4
+        leghth = 1.5
 
         self.pop_size = pop_size
         self.pop = []
         for _ in range(self.pop_size):
             #verts = [(random.uniform(-1.0, 1.0), random.uniform(-1.0, 1.0)) for __ in range(num_verts)]
-            x_pos = np.linspace(0.0 , 1.05 , num_verts)
-            y_pos = np.linspace(throat/2 , 2.0 , num_verts)
+            x_pos = np.linspace(1.05 , 1.05-leghth*math.cos(starting_angle) , num_verts)
+            y_pos = np.linspace(throat/2 , leghth*math.sin(starting_angle) , num_verts)
             verts = [ (x_pos[i],y_pos[i]) for i in range(num_verts) ]
 
             # pop: List[[Wall, fitness]]
@@ -44,26 +46,26 @@ class GA:
                         ]#[(1.05, throat/2 + 0.1),(0.0, 2.0)],
                         #[(1.05, -throat/2 - 0.1),(0.0, -2.0)]]
         self.const_walls = [Wall([Vec(v[0], v[1]) for v in w]) for w in self.const_geom]
-        self.bottom_wall = [ (verts[i][0],-verts[i][1]) for i in range(verts) ]
+        self.bottom_wall = Wall([ Vec(verts[i][0],-verts[i][1]) for i in range(len(verts)) ])
 
         #walls = [Wall([Vec(v[0], v[1]) for v in w]) for w in wall_vertices]
         
         self.test_fitness()
 
     def objective(self,wall):
-        #Grab a simulator and simulate 1 second
-        sim = Simulator(self.const_walls,genThermalIsotropic( 100.0 , 0.02 , 2.0 + 0.1 , -2.0 + 0.1 , 55 , self.n_partilces ) )
+        pop_bottom_wall = Wall([ Vec(vert.x,-vert.y) for vert in wall.get_vertices() ])
+        sim = Simulator(self.const_walls+[wall,pop_bottom_wall],genThermalIsotropic( 100.0 , 0.02 , 2.0 + 0.1 , -2.0 + 0.1 , 55 , self.n_partilces ) )
         
-        sim.many_step(100,self.dt) # magic number that works well-ish
+        sim.many_step(100,self.dt) # magic number that works well-ish 1000
 
         fx = 0
         fy = 0
 
         for wall in sim.get_walls():
             fx += wall.force.x / self.n_partilces / self.dt / 2000
-            fy += wall.force.y / self.n_partilces / self.dt / 2000
+            #fy += wall.force.y / self.n_partilces / self.dt / 2000
         
-        return math.sqrt( fx*fx + fy*fy )
+        return -fx
 
     def test_fitness(self):
         best_fitness = float('-inf')
@@ -76,14 +78,14 @@ class GA:
 
             fitness = self.objective(wall)
 
-            if elem[1] > best_fitness:
-                best_fitness = elem[1]
+            if fitness > best_fitness:
+                best_fitness = fitness
                 best_wall = wall
                 #best_stdev_x = stdev_x
                 #best_stdev_y = stdev_y
         #print(f'stddev_x: {best_stdev_x}, stdev_y: {best_stdev_y}')
         #just for drawing
-        self.bottom_wall = [ (verts[i][0],-verts[i][1]) for i in range(verts) ]
+        self.bottom_wall = Wall([ Vec(vert.x,-vert.y) for vert in best_wall.get_vertices() ])
         return (best_wall, best_fitness)
 
     def select(self, num):
@@ -102,7 +104,7 @@ class GA:
         for _ in range(self.pop_size):
             parents = self.select(2)
             baby = self.crossover(parents)
-            baby[0].mutate(0.05)
+            baby[0].mutate(0.01)
             new_pop.append(baby)
         self.pop = new_pop
 
@@ -113,30 +115,30 @@ ga = GA(30)
 fig, ax = plt.subplots()
 wall_plot, = ax.plot([], [], '-g')
 const_wall_plots = [ax.plot([], [], '-k')[0] for _ in range(len(ga.const_walls))]
-const_wall_bottom = ax.plot([], [], '-g')
+wall_bottom, = ax.plot([], [], '-g')
+
+for plot, w in zip(const_wall_plots, ga.const_geom):
+    xs = [v[0] for v in w]
+    ys = [v[1] for v in w]
+    plot.set_data(xs, ys)
 
 def anim_init():
     ax.set_xlim(-3.0, 3.0)
     ax.set_ylim(-3.0, 3.0)
-    return [wall_plot,const_wall_bottom,*const_wall_plots]
+    return wall_plot,wall_bottom,
 
 def anim_update(_frame):
     wall, fitness = ga.epoch()
 
     print(f'{fitness:e}')
 
-    for plot, w in zip(const_wall_plots, ga.const_geom):
-        xs = [v[0] for v in w]
-        ys = [v[1] for v in w]
-        plot.set_data(xs, ys)
-
     wall_verts = wall.get_vertices()
     wall_plot.set_data([v.x for v in wall_verts], [v.y for v in wall_verts])
 
-    wall_verts_bottom = gc.bottom_wall.get_vertices()
-    const_wall_bottom.set_data([v.x for v in wall_verts_bottom], [v.y for v in wall_verts_bottom])
+    wall_verts_bottom = ga.bottom_wall.get_vertices()
+    wall_bottom.set_data([v.x for v in wall_verts_bottom], [v.y for v in wall_verts_bottom])
 
-    return [wall_plot,const_wall_bottom,*const_wall_plots]
+    return wall_plot,wall_bottom,
 
 anim = FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=100)
 plt.show()
