@@ -2,6 +2,9 @@
 
 ![Thruster example](https://github.com/sxrodrigues/physhackathon2020/blob/main/truster.gif)
 
+Our goal: To use generative design to optimize rocket thruster geometry. Above is an example of how the fuel of a thruster shoots out and generates thrust.
+Below is an eneration of different rocket geometries that slowly get better and better and generating thrust using a genetic algorithm (fuel particles not shown).
+
 ## Dependencies
 Before you can do anything, you need to install the dependencies of this project.
 ```sh
