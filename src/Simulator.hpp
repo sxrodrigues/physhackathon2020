@@ -58,7 +58,7 @@ static Vec lennard_jones(const Vec A, const Vec B) {
 }
 
 // static const constexpr size_t num_particles = 100;
-#define NUM_PARTICLES 1000
+#define NUM_PARTICLES 2000
 
 class Simulator {
     public:
@@ -67,18 +67,19 @@ class Simulator {
             m_walls = std::vector<Wall>();
         }
 
-        Simulator(std::vector<Wall>& walls) {
+        Simulator(std::vector<Wall>& walls,std::vector<Particle>& particles) {
             std::default_random_engine generator; // TODO: Seed the generator perhaps?
             std::normal_distribution<float> pos_dist(0.f, 0.1f);
             std::uniform_real_distribution<float> x_velo_dist(-45.f, 45.f);
             std::uniform_real_distribution<float> y_velo_dist(0.f, 15.f);
 
-            for (size_t i = 0; i < NUM_PARTICLES; ++i) {
+            m_particles = particles;
+            /*for (size_t i = 0; i < NUM_PARTICLES; ++i) {
                 const Vec pos = Vec(pos_dist(generator), pos_dist(generator));
                 const Vec velo = Vec(x_velo_dist(generator), y_velo_dist(generator));
                 Particle p(pos, velo);
                 m_particles.push_back(p);
-            }
+            }*/
             m_walls = walls;
         }
 
@@ -96,11 +97,11 @@ class Simulator {
                         if (circle_line_intersection(p1.get_radius(), p1.get_pos(), vert1, vert2)) {
                             Vec velo = p1.get_velo();
     
-                            // F = dp / dt
-                            wall.force += velo * (p1.get_mass() * 1.f/dt);
-
+                            // F = dp / dt, your forgot the d in dp...
                             Vec normal = Vec(-(vert2 - vert1).y, (vert2-vert1).x).normalized();
-                            velo -= normal * 2.f * velo.dot(normal);
+                            Vec d_velo = normal * 2.f * velo.dot(normal);
+                            velo -= d_velo;
+                            wall.force += d_velo * (p1.get_mass());
                             m_particles[i].set_velo(velo);
                         }
                     }
@@ -130,6 +131,12 @@ class Simulator {
         void many_step(const size_t num_steps, float dt) {
             for (size_t i = 0; i < num_steps; ++i) {
                 step(dt);
+            }
+        }
+
+        void zero_walls() {
+            for (auto&& wall : m_walls) {
+                wall.force =  Vec( 0.0 , 0.0 );
             }
         }
 
@@ -172,12 +179,13 @@ class Simulator {
 void py_init_simulator(py::module& m) {
     py::class_<Simulator>(m, "Simulator")
         .def(py::init<>())
-        .def(py::init<std::vector<Wall>&>())
+        .def(py::init<std::vector<Wall>&,std::vector<Particle>&>())
         .def("step", &Simulator::step)
         .def("many_step", &Simulator::many_step)
         .def("get_particle_positions", &Simulator::get_particle_positions)
         .def("free_allocation", &Simulator::free_allocation)
-        .def("get_walls", &Simulator::get_walls);
+        .def("get_walls", &Simulator::get_walls)
+        .def("zero_walls", &Simulator::zero_walls);
 }
 
 #endif /*__SIMULATOR_HPP__ */
