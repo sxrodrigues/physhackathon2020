@@ -16,41 +16,46 @@
         What is GENZ Thrusters?</p>
 
     <p style ="padding-left: 20px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">
-    This particle simulator is created to optimize the geometry of a rocket thruster.</p>
+        This particle simulator was built to optimize the geometry of a rocket thruster. This problem we identified and decided to solve was a unique but cumulative common interest in the dynamics and launching of rockets. We wanted to determine the optimal form of a rocket thruster in terms of geometry
+         and efficiency of the nozzle design. There are many launches that take place over the world from SpaceX's Starlink to NASA's Mars Exploration Rover that have inspired us to wonder at what can be achieved in optimizing the most plausible and efficient rocket thruster there can be.</p>
     
     <p style ="padding-top: 50px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bolder; font-size: large;">
-        Why a Particle Simulator that...?</p>
+        Why does GENZ Thrusters incorporate a Genetic Algorithm and a Particle Simulator?</p>
 
     <p style ="padding-left: 20px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">
-        (Talk about the reason behind choosing this and why we think this is helpful to the physics community and how they can benefit from it)
+        A genetic algorithm is a simple algorithm which allows us to create a very complex object with very little apriori knowledge of how the system works. Concretely, this means that without knowing about what makes a thruster a good one versus a bad one, we are able to iteratively generate a progressively better thruster. All we have to specify is the physics of the problem (i.e. we just need to calculate the thrust from a particular thruster). <br>
+        <br>
+        To do this, we use a simple custom particle simulator. Each particle is a high energy particle which is supposed to mimic the conditions of a hot gas (the fuel of a typical rocket thruster). We easily calculate the thrust generated from a particular geometry of thruster, and use this to define how well a thruster is doing.
+
     </p>
 
     <p style ="padding-top: 50px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bolder; font-size: large;">
-        How to Use it?</p>
+        How to Use GENZ Thrusters?</p>
 
-    <ul style ="padding-left: 33px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">
-        <li>What's needed in order to run this program</li>
-        <li>How to run the simulation</li> 
-        <li>What are the outcomes, and what does the data represent</li>
-        <li>Maybe how to download results or smthn (idk)</li>
-    </ul>
+    <dl style = "padding-left: 20px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">
+        <dd>Check out our code at https://github.com/sxrodrigues/physhackathon2020 and
+            http://genzthrusters.pythonanywhere.com/</dd>
+        <dt>Installing pybind11: </dt>
+        <dd>pip3 install pybind11</dd>
+        <dt>Installing the simulator module (this must be done in the root directory of this repository): </dt>
+        <dd>pip3 install . </dd>
+        <dt>You can test the code is running and this should print the value 3 to the console.</dt>
+        <dd>python3 src/main.py</dd>
+        <dt>Running the Web Application in your browser as a local host.</dt>
+        <dd>pip3 install Django</dd>
+        <dt>Then enter the "web_app" directory and run:</dt>
+        <dd>python3 manage.py runserver</dd>
+    </dl>
 
     <p style ="padding-top: 50px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bolder; font-size: large;">
         Future Ideas for the project</p>
 
-    <p style ="padding-left: 20px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">
-        (I just thought maybe if we want we can create like a list of just random ideas that we could of added to this and be like
-        what's to come... you know just so it looks like not just a finished project but like that there are ideas that you can still
-        add to it)
-    </p>
-
-    <p style ="padding-top: 50px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-weight: bolder; font-size: large;">
-        What can you use this for?</p>
-
-    <p style ="padding-left: 20px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">
-        (Just if someone's interested but has no idea what they'd use this for we can give them ideas or at least
-        reasons for using it and what instances it can be useful)
-    </p>
+    <ul style ="padding-left: 33px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">
+        <li>Optimizing further not just the nozzle of the thruster but as well as the complete geometry of the thruster.
+            </li>
+        <li>Adding performance optimizations such as multi-threading.</li>
+        <li>Adding fields and intermolecular forces. Atmospheric particles is a possibility as well.</li>
+        </ul>
 
     <div class="w3-panel w3-padding-64">⠀⠀⠀⠀⠀⠀⠀⠀</div>
  </div>
