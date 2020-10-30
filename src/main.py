@@ -37,6 +37,8 @@ scatter, = axs[0].plot([], [], 'o' ,markersize=1)
 wall_plots = [axs[0].plot([], [], '-k')[0] for _ in range(len(walls))]
 #thrust, = axs[1].plot([],[],"-r")
 
+sim = Simulator(walls,genThermalIsotropic( 100.0 , 0.02 , 2.0 + 0.1 , -2.0 + 0.1 , 55 , n_partilces ) )
+sim.many_step(100,dt)
 
 def anim_init():
     axs[0].set_xlim(-4.0,4.0)
@@ -48,8 +50,6 @@ def anim_init():
     #axs[0].set_aspect('equal')
 
     return [scatter, *wall_plots]
-sim = Simulator(walls,genThermalIsotropic( 100.0 , 0.02 , 2.0 + 0.1 , -2.0 + 0.1 , 55 , n_partilces ) )
-sim.many_step(100,dt)
 
 def update(i):
     #  sim.many_step(10000, 0.001)
@@ -70,7 +70,8 @@ def anim_update(_frame):
         ys = [v[1] for v in w]
         plot.set_data(xs, ys)
     
-    update(_frame)
+    #  update(_frame)
+    sim.step(dt)
     
     #axs[1].set_xlim(_frame-100,_frame+20)
     # positions is a list like so: [[x0, y0], [x1, y1], ...]
@@ -85,38 +86,41 @@ def anim_update(_frame):
     scatter.set_data(xs, ys)
     return [scatter, *wall_plots]
 
-#writer = animation.FFMpegWriter(fps=30)
-#anim = animation.FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=10, frames=1000)
-#anim.save('truster.gif', writer='pillow')#writer=writer)
+#  n_frames = 25
+#  for i in range(n_frames):
+    #  if i%(n_frames // 2.5) == 0:
+        #  print(25*i/n_frames,'%')
+    #  update(i)
+#
+#  plt.plot(thrust_frame, thrust_value,label="2.0")
+#
+#  #seocnd run
+#  wall_vertices = [[(1.0, -throat/2),(1.5, -throat/2),(2.0, -(throat/2 + 0.4) ),(2.0, -2.0), (4.0, -2.0), (4.0, 2.0), (2.0, 2.0),(2.0, (throat/2 + 0.4) ), (1.5, throat/2), (1.0, throat/2)],
+                 #  [(1.05, throat/2 + 0.1),(0.0, 4.0)],
+                 #  [(1.05, -throat/2 - 0.1),(0.0, -4.0)]]
+#
+#  sim = Simulator(walls,genThermalIsotropic( 100.0 , 0.02 , 2.0 + 0.1 , -2.0 + 0.1 , 55 , n_partilces ) )
+#  sim.many_step(100,dt)
+#
+#  thrust_value = []
+#  thrust_frame = []
+#
+#  n_frames = 25
+#  for i in range(n_frames):
+    #  if i%(n_frames // 2.5) == 0:
+        #  print(25*i/n_frames,'%')
+    #  update(i)
+#
+#  plt.xlabel('Time')
+#  plt.ylabel('Thrust magnitude')
+#  plt.plot(thrust_frame, thrust_value,label="4.0")
+#  plt.legend()
 
-n_frames = 100
-for i in range(n_frames):
-    if i%(n_frames // 10) == 0:
-        print(100*i/n_frames,'%')
-    update(i)
-
-plt.plot(thrust_frame, thrust_value,label="2.0")
-
-#seocnd run
-wall_vertices = [[(1.0, -throat/2),(1.5, -throat/2),(2.0, -(throat/2 + 0.4) ),(2.0, -2.0), (4.0, -2.0), (4.0, 2.0), (2.0, 2.0),(2.0, (throat/2 + 0.4) ), (1.5, throat/2), (1.0, throat/2)],
-                 [(1.05, throat/2 + 0.1),(0.0, 4.0)],
-                 [(1.05, -throat/2 - 0.1),(0.0, -4.0)]]
-
-sim = Simulator(walls,genThermalIsotropic( 100.0 , 0.02 , 2.0 + 0.1 , -2.0 + 0.1 , 55 , n_partilces ) )
-sim.many_step(100,dt)
-
-thrust_value = []
-thrust_frame = []
-
-n_frames = 100
-for i in range(n_frames):
-    if i%(n_frames // 10) == 0:
-        print(100*i/n_frames,'%')
-    update(i)
-
-plt.plot(thrust_frame, thrust_value,label="4.0")
-plt.legend()
+writer = animation.FFMpegWriter(fps=30)
+anim = animation.FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=10)
+# anim.save('truster.gif', writer='pillow')#writer=writer)
 
 plt.show()
+
 #  anim = FuncAnimation(fig, anim_update, init_func=anim_init, blit=True, interval=10, frames=400)
 #  anim.save('/Users/pvirally/Desktop/gif.gif', writer='imagemagick', fps=60)
